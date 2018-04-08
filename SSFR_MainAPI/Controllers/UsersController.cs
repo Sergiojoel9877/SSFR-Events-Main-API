@@ -9,75 +9,74 @@ using System.Threading.Tasks;
 
 namespace SSFR_MainAPI.Controllers
 {
-    [Produces("application/json")]
-    [Route("api/Events")]
-    public class EventsController : Controller
+    [Route("api/Users")]
+    public class UsersController : Controller
     {
         private readonly IDBRepository _repository;
 
-        public EventsController(IDBRepository repository)
+        public UsersController(IDBRepository repository)
         {
             _repository = repository;
         }
 
         [HttpGet]
-        [Route("Events")]
-        public async Task<IEnumerable<Events>> GetEvents()
+        [Route("Users")]
+        public async Task<IEnumerable<User>> GetUsers()
         {
-            return await _repository.GetEvents();
+            return await _repository.GetUsers();
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetEvent([FromBody] int id)
+        public async Task<IActionResult> GetUser([FromBody] int id)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var @event = await _repository.GetEvent(id);
+            var user = await _repository.GetUser(id);
 
-            if (@event == null)
+            if (user == null)
             {
                 return NotFound();
             }
 
-            return Ok(@event);
+            return Ok(user);
         }
-        
+
         [HttpPost]
-        public async Task<IActionResult> PostEvent([FromBody] Events @event)
+        public async Task<IActionResult> PostUser([FromBody] User user)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var data = await _repository.AddEvent(@event);
+            var data = await _repository.AddUser(user);
 
             return Ok(data);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutEvent([FromRoute] int id, [FromBody] Events @event)
+        public async Task<IActionResult> PutUser([FromRoute] int id, [FromBody] User user)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != @event.Id)
+            if (id != user.Id)
             {
                 return BadRequest();
             }
 
             try
             {
-                await _repository.UpdateEvent(@event);
+                await _repository.UpdateUser(user);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!await _repository.EventExists(id))
+                if (!await _repository.UserExist(id))
                 {
                     return NotFound();
                 }
@@ -91,23 +90,23 @@ namespace SSFR_MainAPI.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteEvent([FromRoute] int id)
+        public async Task<IActionResult> DeleteUser([FromRoute] int id)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var @event = await _repository.GetEvent(id);
+            var user = await _repository.GetUser(id);
 
-            if (@event == null)
+            if (user == null)
             {
                 return NotFound();
             }
 
-            await _repository.DeleteEvent(@event);
+            await _repository.DeleteUser(user);
 
-            return Ok(@event);
+            return Ok(user);
         }
 
     }
