@@ -5,29 +5,34 @@ using SSFR_MainAPI.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Azure.NotificationHubs;
+using Microsoft.Azure.Mobile.Server.Config;
 using System.Threading.Tasks;
+using System.Web.Http;
+using Microsoft.Azure.Mobile.Server;
 
 namespace SSFR_MainAPI.Controllers
 {
     [Produces("application/json")]
-    [Route("api/Events")]
+    [Microsoft.AspNetCore.Mvc.Route("api/Events")]
     public class EventsController : Controller
     {
         private readonly IDBRepository _repository;
+        HttpConfiguration conf { get; set; } = new HttpConfiguration();
 
         public EventsController(IDBRepository repository)
         {
             _repository = repository;
         }
 
-        [HttpGet]
-        [Route("Events")]
+        [Microsoft.AspNetCore.Mvc.HttpGet]
+        [Microsoft.AspNetCore.Mvc.Route("Events")]
         public async Task<IEnumerable<Events>> GetEvents()
         {
             return await _repository.GetEvents();
         }
 
-        [HttpGet("{id}")]
+        [Microsoft.AspNetCore.Mvc.HttpGet("{id}")]
         public async Task<IActionResult> GetEvent([FromRoute] int id)
         {
             if (!ModelState.IsValid)
@@ -45,9 +50,9 @@ namespace SSFR_MainAPI.Controllers
             return Ok(@event);
         }
         
-        [HttpPost]
-        [Route("AddEvent")]
-        public async Task<IActionResult> PostEvent([FromBody] Events @event)
+        [Microsoft.AspNetCore.Mvc.HttpPost]
+        [Microsoft.AspNetCore.Mvc.Route("AddEvent")]
+        public async Task<IActionResult> PostEvent([Microsoft.AspNetCore.Mvc.FromBody] Events @event)
         {
             if (!ModelState.IsValid)
             {
@@ -56,12 +61,43 @@ namespace SSFR_MainAPI.Controllers
 
             var data = await _repository.AddEvent(@event);
 
+            //Get Settings for the server project
+            HttpConfiguration config = this.conf;
+            MobileAppSettingsDictionary settings = this.conf.GetMobileAppSettingsProvider().GetMobileAppSettings();
+
+            //Get the notification hubs credentials for the mobile app
+            string notificationHubName = settings.NotificationHubName;
+            string notificationHubConnection = settings.Connections[MobileAppSettingsKeys.NotificationHubConnectionString].ConnectionString;
+
+            //Create a new Notification Hub Client
+            NotificationHubClient hub = NotificationHubClient.CreateClientFromConnectionString(notificationHubConnection, notificationHubName);
+
+            //Send the message so that all template registrations that contain "messageParam" receive the notifications. This includes APNS, GCM, WNS, and MPNS
+            //Templete registrations
+            Dictionary<string, string> templateParams = new Dictionary<string, string>();
+            templateParams["messageParam"] = "¡El evento " + @event.Name + " Ha sido creado satisfactoriamente!";
+
+            try
+            {
+                //Send the push notification and log the results
+                var result = await hub.SendTemplateNotificationAsync(templateParams);
+
+                //Write the success result to the logs.
+                config.Services.GetTraceWriter().Info(result.State.ToString());
+            }
+            catch (Exception ex)
+            {
+                //Write the failure to the logs.
+                config.Services.GetTraceWriter().Error(ex.Message, null, "Push.SendeAsync Error");
+            }
+
+
             return Ok(data);
         }
 
-        [HttpPut("{id}")]
-        [Route("PutEvent")]
-        public async Task<IActionResult> PutEvent([FromRoute] int id, [FromBody] Events @event)
+        [Microsoft.AspNetCore.Mvc.HttpPut("{id}")]
+        [Microsoft.AspNetCore.Mvc.Route("PutEvent")]
+        public async Task<IActionResult> PutEvent([FromRoute] int id, [Microsoft.AspNetCore.Mvc.FromBody] Events @event)
         {
             if (!ModelState.IsValid)
             {
@@ -92,8 +128,8 @@ namespace SSFR_MainAPI.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id}")]
-        [Route("DeleteEvent")]
+        [Microsoft.AspNetCore.Mvc.HttpDelete("{id}")]
+        [Microsoft.AspNetCore.Mvc.Route("DeleteEvent")]
         public async Task<IActionResult> DeleteEvent([FromRoute] int id)
         {
             if (!ModelState.IsValid)
