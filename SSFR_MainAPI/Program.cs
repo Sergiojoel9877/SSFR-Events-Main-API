@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using SSFR_MainAPI.Data;
 
 namespace SSFR_MainAPI
 {
@@ -25,7 +26,7 @@ namespace SSFR_MainAPI
                 try
                 {
                     var context = services.GetRequiredService<AppDbContext>();
-                    AppDbInitializer.Initialize(context);
+                    AppDbContextInitializer.Initialize(context);
                 }
                 catch (Exception ex)
                 {
