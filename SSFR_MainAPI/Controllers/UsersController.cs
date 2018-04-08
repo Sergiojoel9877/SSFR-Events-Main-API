@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace SSFR_MainAPI.Controllers
 {
+    [Produces("application/json")]
     [Route("api/Users")]
     public class UsersController : Controller
     {
@@ -27,7 +28,7 @@ namespace SSFR_MainAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetUser([FromBody] int id)
+        public async Task<IActionResult> GetUser([FromRoute] int id)
         {
             if (!ModelState.IsValid)
             {
@@ -45,6 +46,7 @@ namespace SSFR_MainAPI.Controllers
         }
 
         [HttpPost]
+        [Route("AddUser")]
         public async Task<IActionResult> PostUser([FromBody] User user)
         {
             if (!ModelState.IsValid)
@@ -58,6 +60,7 @@ namespace SSFR_MainAPI.Controllers
         }
 
         [HttpPut("{id}")]
+        [Route("PutUser")]
         public async Task<IActionResult> PutUser([FromRoute] int id, [FromBody] User user)
         {
             if (!ModelState.IsValid)
@@ -90,6 +93,7 @@ namespace SSFR_MainAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Route("DeleteUser")]
         public async Task<IActionResult> DeleteUser([FromRoute] int id)
         {
             if (!ModelState.IsValid)

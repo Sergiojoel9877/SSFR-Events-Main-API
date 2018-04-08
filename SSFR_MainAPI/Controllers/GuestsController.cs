@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace SSFR_MainAPI.Controllers
 {
+    [Produces("application/json")]
     [Route("api/Guests")]
     public class GuestsController : Controller
     {
@@ -20,14 +21,14 @@ namespace SSFR_MainAPI.Controllers
         }
 
         [HttpGet]
-        [Route("Guest")]
+        [Route("Guests")]
         public async Task<IEnumerable<Guest>> GetGuests()
         {
             return await _repository.GetGuests();
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetGuest([FromBody] int id)
+        public async Task<IActionResult> GetGuest([FromRoute] int id)
         {
             if (!ModelState.IsValid)
             {
@@ -45,6 +46,7 @@ namespace SSFR_MainAPI.Controllers
         }
 
         [HttpPost]
+        [Route("AddGuest")]
         public async Task<IActionResult> PostGuest([FromBody] Guest guest)
         {
             if (!ModelState.IsValid)
@@ -58,6 +60,7 @@ namespace SSFR_MainAPI.Controllers
         }
 
         [HttpPut("{id}")]
+        [Route("PutGuest")]
         public async Task<IActionResult> PutGuest([FromRoute] int id, [FromBody] Guest guest)
         {
             if (!ModelState.IsValid)
@@ -90,6 +93,7 @@ namespace SSFR_MainAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Route("DeleteGuest")]
         public async Task<IActionResult> DeleteGuest([FromRoute] int id)
         {
             if (!ModelState.IsValid)

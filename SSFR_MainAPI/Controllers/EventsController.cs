@@ -28,7 +28,7 @@ namespace SSFR_MainAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetEvent([FromBody] int id)
+        public async Task<IActionResult> GetEvent([FromRoute] int id)
         {
             if (!ModelState.IsValid)
             {
@@ -46,6 +46,7 @@ namespace SSFR_MainAPI.Controllers
         }
         
         [HttpPost]
+        [Route("AddEvent")]
         public async Task<IActionResult> PostEvent([FromBody] Events @event)
         {
             if (!ModelState.IsValid)
@@ -59,6 +60,7 @@ namespace SSFR_MainAPI.Controllers
         }
 
         [HttpPut("{id}")]
+        [Route("PutEvent")]
         public async Task<IActionResult> PutEvent([FromRoute] int id, [FromBody] Events @event)
         {
             if (!ModelState.IsValid)
@@ -91,6 +93,7 @@ namespace SSFR_MainAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Route("DeleteEvent")]
         public async Task<IActionResult> DeleteEvent([FromRoute] int id)
         {
             if (!ModelState.IsValid)
