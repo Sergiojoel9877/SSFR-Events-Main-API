@@ -22,7 +22,6 @@ namespace SSFR_MainAPI
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<AppDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
@@ -30,15 +29,30 @@ namespace SSFR_MainAPI
             services.AddTransient<IDBRepository, DBRepository>();
            
             services.AddMvc();
-        }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+            services.AddSwaggerGen(c =>
+            {
+
+                c.SwaggerDoc("v1", new Swashbuckle.AspNetCore.Swagger.Info { Title = "SSFR Events API - Sergio Joel Ferreras", Version = "v1" });
+
+            });
+        }
+        
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseSwagger();
+
+            app.UseSwaggerUI(c => 
+            {
+
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "SSFR Events API");
+
+            });
 
             app.UseMvc();
         }
