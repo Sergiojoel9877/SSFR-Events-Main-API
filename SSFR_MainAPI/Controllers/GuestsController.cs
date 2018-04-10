@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace SSFR_MainAPI.Controllers
 {
     [Produces("application/json")]
-    [Route("api/Guests")]
+    //[Route("api/Guests")]
     public class GuestsController : Controller
     {
         private readonly IDBRepository _repository;
@@ -21,13 +21,14 @@ namespace SSFR_MainAPI.Controllers
         }
 
         [HttpGet]
-        [Route("Guests")]
+        [Route("api/Guests")]
         public async Task<IEnumerable<Guest>> GetGuests()
         {
             return await _repository.GetGuests();
         }
 
-        [HttpGet("{id}")]
+        [HttpGet]
+        [Route("api/Guests/{id}")]
         public async Task<IActionResult> GetGuest([FromRoute] int id)
         {
             if (!ModelState.IsValid)
@@ -46,7 +47,7 @@ namespace SSFR_MainAPI.Controllers
         }
 
         [HttpPost]
-        [Route("AddGuest")]
+        [Route("api/Guest")]
         public async Task<IActionResult> PostGuest([FromBody] Guest guest)
         {
             if (!ModelState.IsValid)
@@ -59,8 +60,8 @@ namespace SSFR_MainAPI.Controllers
             return Ok(data);
         }
 
-        [HttpPut("{id}")]
-        [Route("PutGuest")]
+        [HttpPut]
+        [Route("api/PutGuests/{id}")]
         public async Task<IActionResult> PutGuest([FromRoute] int id, [FromBody] Guest guest)
         {
             if (!ModelState.IsValid)
@@ -92,8 +93,8 @@ namespace SSFR_MainAPI.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id}")]
-        [Route("DeleteGuest")]
+        [HttpDelete]
+        [Route("api/DeleteGuest/{id}")]
         public async Task<IActionResult> DeleteGuest([FromRoute] int id)
         {
             if (!ModelState.IsValid)

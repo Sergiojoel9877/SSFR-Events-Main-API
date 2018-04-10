@@ -14,7 +14,7 @@ using Microsoft.Azure.Mobile.Server;
 namespace SSFR_MainAPI.Controllers
 {
     [Produces("application/json")]
-    [Microsoft.AspNetCore.Mvc.Route("api/Events")]
+    //[Microsoft.AspNetCore.Mvc.Route("api/Events")]
     public class EventsController : Controller
     {
         private readonly IDBRepository _repository;
@@ -26,13 +26,14 @@ namespace SSFR_MainAPI.Controllers
         }
 
         [Microsoft.AspNetCore.Mvc.HttpGet]
-        [Microsoft.AspNetCore.Mvc.Route("Events")]
+        [Microsoft.AspNetCore.Mvc.Route("api/events")]
         public async Task<IEnumerable<Events>> GetEvents()
         {
             return await _repository.GetEvents();
         }
 
-        [Microsoft.AspNetCore.Mvc.HttpGet("{id}")]
+        [Microsoft.AspNetCore.Mvc.HttpGet]
+        [Microsoft.AspNetCore.Mvc.Route("api/event/{id}")]
         public async Task<IActionResult> GetEvent([FromRoute] int id)
         {
             if (!ModelState.IsValid)
@@ -51,7 +52,7 @@ namespace SSFR_MainAPI.Controllers
         }
         
         [Microsoft.AspNetCore.Mvc.HttpPost]
-        [Microsoft.AspNetCore.Mvc.Route("AddEvent")]
+        [Microsoft.AspNetCore.Mvc.Route("api/PostEvent")]
         public async Task<IActionResult> PostEvent([Microsoft.AspNetCore.Mvc.FromBody] Events @event)
         {
             if (!ModelState.IsValid)
@@ -95,8 +96,8 @@ namespace SSFR_MainAPI.Controllers
             return Ok(data);
         }
 
-        [Microsoft.AspNetCore.Mvc.HttpPut("{id}")]
-        [Microsoft.AspNetCore.Mvc.Route("PutEvent")]
+        [Microsoft.AspNetCore.Mvc.HttpPut]
+        [Microsoft.AspNetCore.Mvc.Route("api/PutEvent/{id}")]
         public async Task<IActionResult> PutEvent([FromRoute] int id, [Microsoft.AspNetCore.Mvc.FromBody] Events @event)
         {
             if (!ModelState.IsValid)
@@ -128,8 +129,8 @@ namespace SSFR_MainAPI.Controllers
             return NoContent();
         }
 
-        [Microsoft.AspNetCore.Mvc.HttpDelete("{id}")]
-        [Microsoft.AspNetCore.Mvc.Route("DeleteEvent")]
+        [Microsoft.AspNetCore.Mvc.HttpDelete]
+        [Microsoft.AspNetCore.Mvc.Route("api/DeleteEvent/{id}")]
         public async Task<IActionResult> DeleteEvent([FromRoute] int id)
         {
             if (!ModelState.IsValid)

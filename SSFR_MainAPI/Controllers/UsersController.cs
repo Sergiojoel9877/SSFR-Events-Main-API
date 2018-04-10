@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace SSFR_MainAPI.Controllers
 {
     [Produces("application/json")]
-    [Route("api/Users")]
+    //[Route("api/Users")]
     public class UsersController : Controller
     {
         private readonly IDBRepository _repository;
@@ -21,13 +21,14 @@ namespace SSFR_MainAPI.Controllers
         }
 
         [HttpGet]
-        [Route("Users")]
+        [Route("api/Users")]
         public async Task<IEnumerable<User>> GetUsers()
         {
             return await _repository.GetUsers();
         }
 
-        [HttpGet("{id}")]
+        [HttpGet]
+        [Route("api/User/{id}")]
         public async Task<IActionResult> GetUser([FromRoute] int id)
         {
             if (!ModelState.IsValid)
@@ -46,7 +47,7 @@ namespace SSFR_MainAPI.Controllers
         }
 
         [HttpPost]
-        [Route("AddUser")]
+        [Route("api/User")]
         public async Task<IActionResult> PostUser([FromBody] User user)
         {
             if (!ModelState.IsValid)
@@ -59,8 +60,8 @@ namespace SSFR_MainAPI.Controllers
             return Ok(data);
         }
 
-        [HttpPut("{id}")]
-        [Route("PutUser")]
+        [HttpPut]
+        [Route("api/User/{id}")]
         public async Task<IActionResult> PutUser([FromRoute] int id, [FromBody] User user)
         {
             if (!ModelState.IsValid)
@@ -92,8 +93,8 @@ namespace SSFR_MainAPI.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id}")]
-        [Route("DeleteUser")]
+        [HttpDelete]
+        [Route("api/DeleteUser/{id}")]
         public async Task<IActionResult> DeleteUser([FromRoute] int id)
         {
             if (!ModelState.IsValid)

@@ -28,14 +28,15 @@ namespace SSFR_MainAPI
 
             services.AddTransient<IDBRepository, DBRepository>();
            
-            services.AddMvc();
-
             services.AddSwaggerGen(c =>
             {
 
                 c.SwaggerDoc("v1", new Swashbuckle.AspNetCore.Swagger.Info { Title = "SSFR Events API - Sergio Joel Ferreras", Version = "v1" });
 
             });
+
+            services.AddMvc();
+
         }
         
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
