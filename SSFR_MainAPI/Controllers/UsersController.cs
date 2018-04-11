@@ -48,6 +48,7 @@ namespace SSFR_MainAPI.Controllers
 
         [HttpPost]
         [Route("api/User")]
+		[ProducesResponseType(typeof(bool), 200)]
         public async Task<IActionResult> PostUser([FromBody] User user)
         {
             if (!ModelState.IsValid)
@@ -59,9 +60,10 @@ namespace SSFR_MainAPI.Controllers
 
             return Ok(data);
         }
-
+        
         [HttpPut]
         [Route("api/User/{id}")]
+		[ProducesResponseType(typeof(bool), 200)]
         public async Task<IActionResult> PutUser([FromRoute] int id, [FromBody] User user)
         {
             if (!ModelState.IsValid)
@@ -94,7 +96,8 @@ namespace SSFR_MainAPI.Controllers
         }
 
         [HttpDelete]
-        [Route("api/DeleteUser/{id}")]
+        [Route("api/DeleteUser/")]
+	    [ProducesResponseType(typeof(bool), 200)]
         public async Task<IActionResult> DeleteUser([FromRoute] int id)
         {
             if (!ModelState.IsValid)

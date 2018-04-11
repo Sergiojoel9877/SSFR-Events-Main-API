@@ -53,6 +53,7 @@ namespace SSFR_MainAPI.Controllers
         
         [Microsoft.AspNetCore.Mvc.HttpPost]
         [Microsoft.AspNetCore.Mvc.Route("api/PostEvent")]
+		[ProducesResponseType(typeof(bool), 200)]
         public async Task<IActionResult> PostEvent([Microsoft.AspNetCore.Mvc.FromBody] Events @event)
         {
             if (!ModelState.IsValid)
@@ -98,6 +99,7 @@ namespace SSFR_MainAPI.Controllers
 
         [Microsoft.AspNetCore.Mvc.HttpPut]
         [Microsoft.AspNetCore.Mvc.Route("api/PutEvent/{id}")]
+		[ProducesResponseType(typeof(bool), 200)]
         public async Task<IActionResult> PutEvent([FromRoute] int id, [Microsoft.AspNetCore.Mvc.FromBody] Events @event)
         {
             if (!ModelState.IsValid)
@@ -131,6 +133,7 @@ namespace SSFR_MainAPI.Controllers
 
         [Microsoft.AspNetCore.Mvc.HttpDelete]
         [Microsoft.AspNetCore.Mvc.Route("api/DeleteEvent/{id}")]
+		[ProducesResponseType(typeof(bool), 200)]
         public async Task<IActionResult> DeleteEvent([FromRoute] int id)
         {
             if (!ModelState.IsValid)

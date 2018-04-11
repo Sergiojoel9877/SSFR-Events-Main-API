@@ -48,6 +48,7 @@ namespace SSFR_MainAPI.Controllers
 
         [HttpPost]
         [Route("api/Guest")]
+		[ProducesResponseType(typeof(bool), 200)]
         public async Task<IActionResult> PostGuest([FromBody] Guest guest)
         {
             if (!ModelState.IsValid)
@@ -62,6 +63,7 @@ namespace SSFR_MainAPI.Controllers
 
         [HttpPut]
         [Route("api/PutGuests/{id}")]
+		[ProducesResponseType(typeof(bool), 200)]
         public async Task<IActionResult> PutGuest([FromRoute] int id, [FromBody] Guest guest)
         {
             if (!ModelState.IsValid)
@@ -95,6 +97,7 @@ namespace SSFR_MainAPI.Controllers
 
         [HttpDelete]
         [Route("api/DeleteGuest/{id}")]
+		[ProducesResponseType(typeof(bool), 200)]
         public async Task<IActionResult> DeleteGuest([FromRoute] int id)
         {
             if (!ModelState.IsValid)
