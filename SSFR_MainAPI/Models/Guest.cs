@@ -33,8 +33,5 @@ namespace SSFR_MainAPI.Models
 
         public int EventId { get; set; }
 
-        [ForeignKey("EventId")]
-        public Events Event { get; set; }
-
     }
 }

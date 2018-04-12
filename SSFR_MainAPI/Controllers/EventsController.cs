@@ -9,7 +9,13 @@ using Microsoft.Azure.NotificationHubs;
 using Microsoft.Azure.Mobile.Server.Config;
 using System.Threading.Tasks;
 using System.Web.Http;
+using System.Configuration;
 using Microsoft.Azure.Mobile.Server;
+using OneSignalSharp.Posting;
+using OneSignalSharp;
+using System.Net;
+using System.Text;
+using System.IO;
 
 namespace SSFR_MainAPI.Controllers
 {
@@ -63,37 +69,44 @@ namespace SSFR_MainAPI.Controllers
 
             var data = await _repository.AddEvent(@event);
 
-            //Get Settings for the server project
-            HttpConfiguration config = this.conf;
-            MobileAppSettingsDictionary settings = this.conf.GetMobileAppSettingsProvider().GetMobileAppSettings();
+            var request = WebRequest.Create("https://onesignal.com/api/v1/notifications") as HttpWebRequest;
 
-            //Get the notification hubs credentials for the mobile app
-            string notificationHubName = settings.NotificationHubName;
-            string notificationHubConnection = settings.Connections[MobileAppSettingsKeys.NotificationHubConnectionString].ConnectionString;
+            request.KeepAlive = true;
+            request.Method = "POST";
+            request.ContentType = "application/json; charset=utf-8";
 
-            //Create a new Notification Hub Client
-            NotificationHubClient hub = NotificationHubClient.CreateClientFromConnectionString(notificationHubConnection, notificationHubName);
+            request.Headers.Add("authorization", "Basic NzU3MDBmYjAtZmY2NS00NjhlLTg0ZDQtMDYxY2ZiNDExYzli");
 
-            //Send the message so that all template registrations that contain "messageParam" receive the notifications. This includes APNS, GCM, WNS, and MPNS
-            //Templete registrations
-            Dictionary<string, string> templateParams = new Dictionary<string, string>();
-            templateParams["messageParam"] = "¡El evento " + @event.Name + " Ha sido creado satisfactoriamente!";
+            byte[] byteArray = Encoding.UTF8.GetBytes("{"
+                                                    + "\"app_id\": \"23fbe6ba-7814-4714-aa75-00a3480f5b68\","
+                                                    + "\"contents\": {\"en\": \"¡Hey, un nuevo evento a sido agregado!, anda buscalo:\"},"
+                                                    + "\"included_segments\": [\"All\"]}");
+
+            string responseContent = null;
 
             try
             {
-                //Send the push notification and log the results
-                var result = await hub.SendTemplateNotificationAsync(templateParams);
+                using (var writer = request.GetRequestStream())
+                {
+                    writer.Write(byteArray, 0, byteArray.Length);
+                }
 
-                //Write the success result to the logs.
-                config.Services.GetTraceWriter().Info(result.State.ToString());
+                using (var response = request.GetResponse() as HttpWebResponse)
+                {
+                    using (var reader = new StreamReader(response.GetResponseStream()))
+                    {
+                        responseContent = reader.ReadToEnd();
+                    }
+                }
             }
-            catch (Exception ex)
+            catch (WebException ex)
             {
-                //Write the failure to the logs.
-                config.Services.GetTraceWriter().Error(ex.Message, null, "Push.SendeAsync Error");
+                System.Diagnostics.Debug.WriteLine(ex.Message);
+                System.Diagnostics.Debug.WriteLine(new StreamReader(ex.Response.GetResponseStream()).ReadToEnd());
             }
 
-
+            System.Diagnostics.Debug.WriteLine(responseContent);
+            
             return Ok(data);
         }
 
