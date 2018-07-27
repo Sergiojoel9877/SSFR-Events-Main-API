@@ -32,10 +32,10 @@ namespace SSFR_MainAPI.Models
         public string Gender { get; set; }
 
         public int EventId { get; set; }
-        
-        public Dictionary<int, bool> WasInvited { get; set; }
 
-        public Dictionary<int, bool> HasAssisted { get; set; }
+        public List<WasInvited> Invitations { get; set; }
+
+        public List<HasAssisted> Assistences { get; set; }
 
     }
 }
