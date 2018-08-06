@@ -31,5 +31,13 @@ namespace SSFR_MainAPI.Data
         Task<bool> EventExists(int id);
         Task<bool> UpdateEvent(Events @event);
         Task<bool> DeleteEvent(Events @event);
+
+        //CRUD UserSigneUp_In
+        Task<bool> RegUser(UserSignUp user);
+        Task<UserSignUp> GetRegUser(int id);
+        Task<IEnumerable<UserSignUp>> GetRegUsers();
+        Task<bool> UserRegExits(int id);
+        Task<bool> UpdateRegUser(UserSignUp user);
+        
     }
 }

@@ -77,10 +77,13 @@ namespace SSFR_MainAPI.Controllers
 
             request.Headers.Add("authorization", "Basic NzU3MDBmYjAtZmY2NS00NjhlLTg0ZDQtMDYxY2ZiNDExYzli");
 
-            byte[] byteArray = Encoding.UTF8.GetBytes("{"
-                                                    + "\"app_id\": \"23fbe6ba-7814-4714-aa75-00a3480f5b68\","
-                                                    + "\"contents\": {\"en\": \"¡Hey, un nuevo evento a sido agregado!, anda buscalo:\"},"
-                                                    + "\"included_segments\": [\"All\"]}");
+            string msg = "¡Hey, un nuevo evento a sido agregado!, anda buscalo: " + @event.Name;
+
+            string content = String.Format("{"+ "\"app_id\": \"23fbe6ba-7814-4714-aa75-00a3480f5b68\","
+                                              + "\"contents\": {\"en\": \"{0}\"},"
+                                              + "\"included_segments\": [\"All\"]}", msg);
+
+            byte[] byteArray = Encoding.UTF8.GetBytes(content);
 
             string responseContent = null;
 

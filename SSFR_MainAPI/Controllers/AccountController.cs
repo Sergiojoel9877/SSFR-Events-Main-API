@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SSFR_MainAPI.Data;
+using SSFR_MainAPI.Models;
 
 namespace SSFR_MainAPI.Controllers
 {
@@ -11,30 +13,56 @@ namespace SSFR_MainAPI.Controllers
     [Route("api/Account")]
     public class AccountController : Controller
     {
-        // GET: api/Account
-        [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
+        private readonly IDBRepository _repository;
 
-        // GET: api/Account/5
-        [HttpGet("{id}", Name = "Get")]
-        public string Get(int id)
+        public AccountController(IDBRepository repository)
         {
-            return "value";
+            _repository = repository;
         }
+        //// GET: api/Account
+        //[HttpGet]
+        //public IEnumerable<string> Get()
+        //{
+        //    return new string[] { "value1", "value2" };
+        //}
+
+        //// GET: api/Account/5
+        //[HttpGet("{id}", Name = "Get")]
+        //public string Get(int id)
+        //{
+        //    return "value";
+        //}
         
         // POST: api/Account
         [HttpPost]
-        public void Post([FromBody]string value)
+        public async Task<IActionResult> Register([FromBody]User user)
         {
+            if (ModelState.IsValid)
+            {
+                if (_repository.UserSignUp)
+                {
+
+                }
+                return Ok();
+            }
+            else
+            {
+                return BadRequest(ModelState);
+            }
         }
         
         // PUT: api/Account/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
+        [HttpPost]
+        public void Login(int id, [FromBody]string value)
         {
+            if (ModelState.IsValid)
+            {
+
+            }
+            else
+            {
+                BadRequest();
+            }
         }
         
         // DELETE: api/ApiWithActions/5
