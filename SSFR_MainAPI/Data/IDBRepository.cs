@@ -32,12 +32,14 @@ namespace SSFR_MainAPI.Data
         Task<bool> UpdateEvent(Events @event);
         Task<bool> DeleteEvent(Events @event);
 
-        //CRUD UserSigneUp_In
+        //CRUD UserSigneUp
         Task<bool> RegUser(UserSignUp user);
         Task<UserSignUp> GetRegUser(int id);
         Task<IEnumerable<UserSignUp>> GetRegUsers();
         Task<bool> UserRegExits(int id);
+        Task<UserSignUp> FindByEmail(string email);
         Task<bool> UpdateRegUser(UserSignUp user);
-        
+        Task<bool> DeleteRegUser(UserSignUp user);
+       
     }
 }

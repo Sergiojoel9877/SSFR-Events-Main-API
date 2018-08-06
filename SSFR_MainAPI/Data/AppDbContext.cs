@@ -14,6 +14,7 @@ namespace SSFR_MainAPI.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Guest> Guests { get; set; }
         public DbSet<Events> Events { get; set; }
+        public DbSet<UserSignUp> UserSignUps { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)   
         {

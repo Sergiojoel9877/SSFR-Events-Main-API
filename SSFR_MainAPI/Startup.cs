@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using SSFR_MainAPI.Data;
 
 namespace SSFR_MainAPI
@@ -27,7 +30,22 @@ namespace SSFR_MainAPI
             services.AddDbContext<AppDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddTransient<IDBRepository, DBRepository>();
-           
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+               .AddJwtBearer(jwtBearerOptions =>
+               {
+                   jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters()
+                   {
+                       ValidateActor = true,
+                       ValidateAudience = true,
+                       ValidateLifetime = true,
+                       ValidateIssuerSigningKey = true,
+                       ValidIssuer = Configuration["Jwt:Issuer"],
+                       ValidAudience = Configuration["Jwt:Audience"],
+                       IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["SigningKey"]))
+                   };
+               });
+
             services.AddSwaggerGen(c =>
             {
 
@@ -47,6 +65,8 @@ namespace SSFR_MainAPI
             }
 
             app.UseSwagger();
+
+            app.UseAuthentication();
 
             app.UseSwaggerUI(c => 
             {

@@ -63,6 +63,17 @@ namespace SSFR_MainAPI.Data
             return added;
         }
 
+        public async Task<bool> RegUser(UserSignUp user)
+        {
+            var obj = await dbContext.UserSignUps.AddAsync(user);
+
+            await dbContext.SaveChangesAsync();
+
+            var added = user.Id == obj.Entity.Id;
+
+            return added;
+        }
+
         //*                 DELETES METHODS                *\\
 
         //public async Task<bool> DeleteDoorman(Doorman doorman)
@@ -108,6 +119,17 @@ namespace SSFR_MainAPI.Data
 
             return removed;
         }
+        
+        public async Task<bool> DeleteRegUser(UserSignUp user)
+        {
+            var rem = dbContext.UserSignUps.Remove(user);
+
+            await dbContext.SaveChangesAsync();
+
+            var removed = rem.State == EntityState.Deleted;
+
+            return removed;
+        }
 
         //*                 GETTERS BY ID METHODS                   *\\
 
@@ -118,6 +140,11 @@ namespace SSFR_MainAPI.Data
         public async Task<Guest> GetGuest(int id) => await dbContext.Guests.FindAsync(id) ?? null;
 
         public async Task<User> GetUser(int id) => await dbContext.Users.FindAsync(id) ?? null;
+
+        public async Task<UserSignUp> GetRegUser(int id) => await dbContext.UserSignUps.FindAsync(id) ?? null;
+
+        //* GETTER BY NAME / EMAIL / ETC*\\
+        public async Task<UserSignUp> FindByEmail(string email) => await dbContext.UserSignUps.FindAsync(email) ?? null;
 
 
         //*                 GETTERS                 *\\
@@ -130,7 +157,8 @@ namespace SSFR_MainAPI.Data
 
         public async Task<IEnumerable<User>> GetUsers() => await dbContext.Users.AsNoTracking().ToListAsync() ?? null;
 
-
+        public async Task<IEnumerable<UserSignUp>> GetRegUsers() => await dbContext.UserSignUps.AsNoTracking().ToListAsync() ?? null;
+        
         //*                 UPDATES METHODS                *\\
 
         //public async Task<bool> UpdateDoorman(Doorman doorman)
@@ -177,7 +205,17 @@ namespace SSFR_MainAPI.Data
             return true;
         }
 
+        public async Task<bool> UpdateRegUser(UserSignUp user)
+        {
+            var obj = dbContext.UserSignUps.Update(user);
 
+            await dbContext.SaveChangesAsync();
+
+            var modied = obj.State == EntityState.Modified;
+
+            return true;
+        }
+        
         //*                 EXISTENCES METHODS                  *\\
 
         //public async Task<bool> DoormanExist(int id)
@@ -249,5 +287,23 @@ namespace SSFR_MainAPI.Data
 
             return false;
         }
+
+        public async Task<bool> UserRegExits(int id)
+        {
+            var obj = await dbContext.UserSignUps.FindAsync(id);
+
+            var all = await dbContext.UserSignUps.ToListAsync();
+
+            foreach (UserSignUp user in all)
+            {
+                if (user.Id == obj.Id)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+        
     }
 }

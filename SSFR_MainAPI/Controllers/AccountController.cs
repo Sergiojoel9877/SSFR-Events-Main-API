@@ -1,9 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using SSFR_MainAPI.Data;
 using SSFR_MainAPI.Models;
 
@@ -14,36 +19,30 @@ namespace SSFR_MainAPI.Controllers
     public class AccountController : Controller
     {
         private readonly IDBRepository _repository;
+        private readonly IConfiguration _configuration;
 
-        public AccountController(IDBRepository repository)
+        public AccountController(IDBRepository repository, IConfiguration configuration)
         {
+            _configuration = configuration;
             _repository = repository;
-        }
-        //// GET: api/Account
-        //[HttpGet]
-        //public IEnumerable<string> Get()
-        //{
-        //    return new string[] { "value1", "value2" };
-        //}
-
-        //// GET: api/Account/5
-        //[HttpGet("{id}", Name = "Get")]
-        //public string Get(int id)
-        //{
-        //    return "value";
-        //}
-        
+        }   
+       
         // POST: api/Account
         [HttpPost]
-        public async Task<IActionResult> Register([FromBody]User user)
+        public async Task<IActionResult> Register([FromBody]UserSignUp user)
         {
             if (ModelState.IsValid)
             {
-                if (_repository.UserSignUp)
+                if (!await _repository.UserRegExits(user.Id))
                 {
-
+                    return NotFound();
                 }
-                return Ok();
+                else
+                {
+                    await _repository.RegUser(user);
+
+                    return Ok("Registered");
+                }
             }
             else
             {
@@ -53,22 +52,66 @@ namespace SSFR_MainAPI.Controllers
         
         // PUT: api/Account/5
         [HttpPost]
-        public void Login(int id, [FromBody]string value)
+        public async Task<IActionResult> Login([FromBody]UserSignUp user)
         {
             if (ModelState.IsValid)
             {
+                var allUsers = await _repository.GetRegUsers();
 
+                var canLogin = allUsers.Any((u) => u.Password == user.Password && u.Email == user.Email);
+
+                if (canLogin)
+                {
+                    var claims = new[] {
+
+                        new Claim("email", user.Email),
+                        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+
+                    };
+
+                    var token = new JwtSecurityToken(_configuration["Jwt:Issuer"],
+                                                    _configuration["Jwt:Audience"],
+                                                    claims,
+                                                    DateTime.UtcNow,
+                                                    DateTime.UtcNow.AddMinutes(45),
+                                                    new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:SigningKey"])),
+                                                    SecurityAlgorithms.HmacSha256));
+
+                    var userdata = await _repository.FindByEmail(user.Email);
+
+                    if (userdata != null)
+                    {
+                        //return Ok(userdata);
+                        return Ok(new JwtSecurityTokenHandler().WriteToken(token));
+                    }
+                }
             }
             else
             {
                 BadRequest();
             }
+
+            return NoContent();
         }
-        
-        // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+
+        [HttpPut]
+        public async Task<IActionResult> ChangePassword([FromBody]UserSignUp user)
         {
+            if (ModelState.IsValid)
+            {
+                var changed = await _repository.UpdateRegUser(user);
+
+                if (changed)
+                {
+                    return Ok();
+                }
+            }
+            else
+            {
+                return BadRequest();
+            }
+            
+            return NoContent();
         }
     }
 }

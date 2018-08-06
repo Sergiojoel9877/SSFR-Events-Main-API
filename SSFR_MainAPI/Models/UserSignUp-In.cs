@@ -7,6 +7,9 @@ namespace SSFR_MainAPI.Models
 {
     public class UserSignUp
     {
+        [Key]
+        public int Id { get; set; }
+
         public string Email { get; set; }
 
         public string Password { get; set; }
@@ -16,6 +19,9 @@ namespace SSFR_MainAPI.Models
 
     public class UserSignIn
     {
+        [Key]
+        public int Id { get; set; }
+
         public string Email { get; set; }
 
         public string Password { get; set; }
