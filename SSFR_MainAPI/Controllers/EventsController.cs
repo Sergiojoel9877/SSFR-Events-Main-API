@@ -79,8 +79,12 @@ namespace SSFR_MainAPI.Controllers
 
             byte[] byteArray = Encoding.UTF8.GetBytes("{"
                                                     + "\"app_id\": \"23fbe6ba-7814-4714-aa75-00a3480f5b68\","
-                                                    + "\"contents\": {\"en\": \"¡Hey, un nuevo evento a sido agregado!, anda buscalo:\"},"
-                                                    + "\"included_segments\": [\"All\"]}");
+                                                    + "\"contents\":" +
+                                                    " {" +
+                                                    "\"en\":" +
+                                                    " \"¡Hey, un nuevo evento a sido agregado!, anda buscalo:\"},"
+                                                    + "\"included_segments\": [\"All\"]" +
+                                                    "}");
 
             string responseContent = null;
 
